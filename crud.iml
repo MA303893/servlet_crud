@@ -21,7 +21,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Tomcat 9.0.10" level="application_server_libraries" />
     <orderEntry type="library" name="javax.servlet:jstl:1.2" level="project" />
-    <orderEntry type="library" name="postgresql-42.2.4" level="project" />
-    <orderEntry type="library" name="apache-commons" level="project" />
+    <orderEntry type="library" name="lib" level="project" />
   </component>
 </module>

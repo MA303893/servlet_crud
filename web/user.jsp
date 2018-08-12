@@ -5,10 +5,9 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
-    <link type="text/css"
-          href="css/ui-lightness/jquery-ui-1.8.18.custom.css" rel="stylesheet"/>
-    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.8.18.custom.min.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <title>Add new user</title>
 </head>
 <body>
@@ -16,6 +15,9 @@
     $(function () {
         $('input[name=dob]').datepicker();
     });
+    var changeSpan = function (val) {
+        $('#fileName').innerText = val
+    }
 </script>
 
 <form method="POST" action='UserController' name="frmAddUser" enctype="multipart/form-data">
@@ -32,7 +34,10 @@
         value="<fmt:formatDate pattern="MM/dd/yyyy" value="${user.dob}" />"/> <br/>
     Email : <input type="text" name="email"
                    value="<c:out value="${user.email}" />"/> <br/>
-    Image : <input type="file" name="file" size="50" placeholder="Upload Your File"/><br><br>
+    Image : <c:if test="${!empty user.fileName}">
+    <span id="fileName">${user.fileName}</span>
+</c:if>
+    <input type="file" name="file" size="50" placeholder="Upload Your File" onchange="changeSpan(this.value)"/><br><br>
     <input type="submit" value="Submit"/>
 
 </form>

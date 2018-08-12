@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.lulu.model.User;
 import com.lulu.util.DbUtil;
@@ -21,22 +22,32 @@ public class UserDao {
         connection = DbUtil.getConnection();
     }
 
-    public void addUser(User user) {
+    public User addUser(User user) {
         try {
-            connection.setAutoCommit(false);
-            PreparedStatement preparedStatement = connection.prepareStatement("insert into users(firstname,lastname,dob,email,file) values (?, ?, ?, ?, ?)");
+            String generatedColumns[] = {"userid"};
+            PreparedStatement preparedStatement = connection.prepareStatement("insert into users(firstname,lastname,dob,email,file) values (?, ?, ?, ?, ?)", generatedColumns);
             // Parameters start with 1
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setDate(3, new java.sql.Date(user.getDob().getTime()));
             preparedStatement.setString(4, user.getEmail());
-            preparedStatement.setBinaryStream(5, user.getFile());
-            preparedStatement.executeUpdate();
-            connection.commit();
+            preparedStatement.setString(5, user.getFileName());
+            int affectedRows = preparedStatement.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Creating user failed, no rows affected.");
+            }
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    user.setUserid(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Creating user failed, no ID obtained.");
+                }
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return user;
     }
 
     public void deleteUser(int userId) {
@@ -55,14 +66,15 @@ public class UserDao {
     public void updateUser(User user) {
         try {
             PreparedStatement preparedStatement = connection
-                    .prepareStatement("update users set firstname=?, lastname=?, dob=?, email=?" +
+                    .prepareStatement("update users set firstname=?, lastname=?, dob=?, email=?, file=?" +
                             "where userid=?");
             // Parameters start with 1
             preparedStatement.setString(1, user.getFirstName());
             preparedStatement.setString(2, user.getLastName());
             preparedStatement.setDate(3, new java.sql.Date(user.getDob().getTime()));
             preparedStatement.setString(4, user.getEmail());
-            preparedStatement.setInt(5, user.getUserid());
+            preparedStatement.setString(5, user.getFileName());
+            preparedStatement.setInt(6, user.getUserid());
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -82,6 +94,7 @@ public class UserDao {
                 user.setLastName(rs.getString("lastname"));
                 user.setDob(rs.getDate("dob"));
                 user.setEmail(rs.getString("email"));
+                user.setFileName(rs.getString("file"));
                 users.add(user);
             }
         } catch (SQLException e) {
@@ -105,6 +118,7 @@ public class UserDao {
                 user.setLastName(rs.getString("lastname"));
                 user.setDob(rs.getDate("dob"));
                 user.setEmail(rs.getString("email"));
+                user.setFileName(rs.getString("file"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -10,16 +10,16 @@ public class User {
     private String lastName;
     private Date dob;
     private String email;
+    private String fileName;
 
-    public InputStream getFile() {
-        return file;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setFile(InputStream file) {
-        this.file = file;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
-    private InputStream file;
 
     public int getUserid() {
         return userid;

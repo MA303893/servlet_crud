@@ -77,13 +77,16 @@ public class UserController extends HttpServlet {
             user = dao.addUser(user);
             isUpdate = true;
         } else {
+            User userFromDb = dao.getUserByEmail(user.getEmail());
             if(!filePart.getSubmittedFileName().isEmpty()){
-                if (user.getFileName() != filePart.getSubmittedFileName()){
+                if (userFromDb.getFileName() != filePart.getSubmittedFileName()){
                     user.setFileName(filePart.getSubmittedFileName());
                     isUpdate = true;
                 }
             }
             user.setUserid(Integer.parseInt(userid));
+            if(user.getFileName() == null)
+                user.setFileName(userFromDb.getFileName());
             dao.updateUser(user);
         }
         if(isUpdate)

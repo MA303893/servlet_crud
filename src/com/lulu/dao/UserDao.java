@@ -126,4 +126,26 @@ public class UserDao {
 
         return user;
     }
+
+    public User getUserByEmail(String email) {
+        User user = new User();
+        try {
+            PreparedStatement preparedStatement = null;
+            preparedStatement = connection.prepareStatement("select * from users where email=?");
+            preparedStatement.setString(1, email);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                user.setUserid(rs.getInt("userid"));
+                user.setFirstName(rs.getString("firstname"));
+                user.setLastName(rs.getString("lastname"));
+                user.setDob(rs.getDate("dob"));
+                user.setEmail(rs.getString("email"));
+                user.setFileName(rs.getString("file"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
 }

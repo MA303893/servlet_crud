@@ -3,10 +3,8 @@ package com.lulu.controller;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -49,12 +47,36 @@ public class UserController extends HttpServlet {
         } else if (action.equalsIgnoreCase("listUser")) {
             forward = LIST_USER;
             request.setAttribute("users", dao.getAllUsers());
-        } else {
+        }else if (action.equalsIgnoreCase("download")){
+            forward = LIST_USER;
+            downloadUserFile(request, response);
+        }
+        else {
             forward = INSERT_OR_EDIT;
         }
 
         RequestDispatcher view = request.getRequestDispatcher(forward);
         view.forward(request, response);
+    }
+
+    private void downloadUserFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        String appPath = request.getServletContext().getRealPath("web/resources/users/") + request.getParameter("userId") + "/file/";
+        User user = dao.getUserById(Integer.parseInt(request.getParameter("userId")));
+        response.setContentType("APPLICATION/OCTET-STREAM");
+        response.setHeader("Content-Disposition", "attachment; filename=\""
+                + user.getFileName() + "\"");
+
+        FileInputStream fileInputStream = new FileInputStream(appPath
+                + user.getFileName());
+
+        int i;
+        while ((i = fileInputStream.read()) != -1) {
+            out.write(i);
+        }
+        fileInputStream.close();
+        out.close();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

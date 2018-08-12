@@ -1,6 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ page language="java" contentType="text/html; charset=EUC-KR" pageEncoding="EUC-KR" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
@@ -24,12 +24,16 @@
     <tbody>
     <c:forEach items="${users}" var="user">
         <tr>
-            <td><c:out value="${user.userid}" /></td>
-            <td><c:out value="${user.firstName}" /></td>
-            <td><c:out value="${user.lastName}" /></td>
-            <td><fmt:formatDate pattern="yyyy-MMM-dd" value="${user.dob}" /></td>
-            <td><c:out value="${user.email}" /></td>
-            <td><c:out value="${user.fileName}"/></td>
+            <td><c:out value="${user.userid}"/></td>
+            <td><c:out value="${user.firstName}"/></td>
+            <td><c:out value="${user.lastName}"/></td>
+            <td><fmt:formatDate pattern="yyyy-MMM-dd" value="${user.dob}"/></td>
+            <td><c:out value="${user.email}"/></td>
+            <td>
+                <a href="UserController?action=download&userId=<c:out value="${user.userid}"/>">
+                    <c:out value="${user.fileName}"/>
+                </a>
+            </td>
             <td><a href="UserController?action=edit&userId=<c:out value="${user.userid}"/>">Update</a></td>
             <td><a href="UserController?action=delete&userId=<c:out value="${user.userid}"/>">Delete</a></td>
         </tr>
